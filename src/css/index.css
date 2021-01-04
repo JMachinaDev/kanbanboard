@@ -1,0 +1,25 @@
+body {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:root {
+	--text-font: Arial, Helvetica, sans-serif;
+	--light-text: #eeeeee;
+	--dark-background: #191b19;
+}
+
+.theme {
+	background-color: var(--dark-background);
+	font-family: var(--text-font);
+	color: var(--light-text);
+}
+
+.navbar {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	height: 100px;
+}
