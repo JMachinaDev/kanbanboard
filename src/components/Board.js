@@ -1,21 +1,74 @@
 import React, { useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { uuid } from 'uuidv4';
 
 // https://codesandbox.io/s/jovial-leakey-i0ex5?file=/src/App.js
 // https://dev.to/bnevilleoneill/build-a-beautiful-draggable-kanban-board-with-react-beautiful-dnd-3oij
-
-// import Home from './Home';
-
+// console.log(uuid)
 const itemsFromBackend = [
-    { id: 1, content: "first task"},
-    { id: 2, content: "second task"},
-    { id: 3, content: "third task"},
-    { id: 4, content: "fourth task"},
-    { id: 5, content: "fifth task"},
-    { id: 6, content: "sixth task"},
+    { id: uuid(), content: "first task"},
+    { id: uuid(), content: "second task"},
+    { id: uuid(), content: "third task"},
+    { id: uuid(), content: "fourth task"},
+    { id: uuid(), content: "fifth task"},
+    { id: uuid(), content: "sixth task"},
 ]
 
+const columnsFromBackend = {
+    [uuid()]: {
+        name: 'Requested',
+        items: itemsFromBackend
+    },
+    [uuid()]: {
+        name: 'To do',
+        items: []
+    },
+    [uuid()]: {
+        name: 'In Progress',
+        items: []
+    },
+    [uuid()]: {
+        name: 'Done',
+        items: []
+    }
+}
 
+const onDragEnd = (result, columns, setColumns) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+  
+    if (source.droppableId !== destination.droppableId) {
+      const sourceColumn = columns[source.droppableId];
+      const destColumn = columns[destination.droppableId];
+      const sourceItems = [...sourceColumn.items];
+      const destItems = [...destColumn.items];
+      const [removed] = sourceItems.splice(source.index, 1);
+      destItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...sourceColumn,
+          items: sourceItems
+        },
+        [destination.droppableId]: {
+          ...destColumn,
+          items: destItems
+        }
+      });
+    } else {
+      const column = columns[source.droppableId];
+      const copiedItems = [...column.items];
+      const [removed] = copiedItems.splice(source.index, 1);
+      copiedItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...column,
+          items: copiedItems
+        }
+      });
+    }
+  };
 
 const Board = () => {
     const [columns, setColumns] = useState(columnsFromBackend);
